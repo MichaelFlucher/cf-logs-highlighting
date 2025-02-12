@@ -1,0 +1,79 @@
+{
+  "publisher": "flumi",
+  "name": "cf-logs-highlighting",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MichaelFlucher/cf-logs-highlighting"
+  },
+  "displayName": "cf-logs-highlighting",
+  "description": "Highlight important parts of the Cloud Foundry log file",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.97.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onLanguage:cflog"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.applyCustomHighlighting",
+        "title": "Apply Custom Highlighting"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "extension.applyCustomHighlighting",
+          "when": "editorHasSelection"
+        }
+      ]
+    },
+    "languages": [
+      {
+        "id": "cflog",
+        "aliases": [
+          "CF-Log",
+          "cflog"
+        ],
+        "extensions": [
+          ".log",
+          ".cflog"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "cflog",
+        "scopeName": "source.cflog",
+        "path": "./syntaxes/cflog.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "CF Logs Highlighting",
+      "properties": {
+        "cfLogsHighlighting.defaultColors": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically configure default token colors"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^16.18.126",
+    "@types/vscode": "^1.97.0",
+    "typescript": "^4.9.5"
+  }
+}
