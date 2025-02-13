@@ -54,17 +54,7 @@
         "scopeName": "source.cflog",
         "path": "./syntaxes/cflog.tmLanguage.json"
       }
-    ],
-    "configuration": {
-      "title": "CF Logs Highlighting",
-      "properties": {
-        "cfLogsHighlighting.defaultColors": {
-          "type": "boolean",
-          "default": true,
-          "description": "Automatically configure default token colors"
-        }
-      }
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
