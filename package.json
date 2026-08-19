@@ -7,7 +7,7 @@
   },
   "displayName": "cf-logs-highlighting",
   "description": "Highlight important parts of the Cloud Foundry log file",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.97.0"
   },
@@ -15,25 +15,10 @@
     "Programming Languages"
   ],
   "activationEvents": [
-    "onStartupFinished",
     "onLanguage:cflog"
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "extension.applyCustomHighlighting",
-        "title": "Apply Custom Highlighting"
-      }
-    ],
-    "menus": {
-      "editor/context": [
-        {
-          "command": "extension.applyCustomHighlighting",
-          "when": "editorHasSelection"
-        }
-      ]
-    },
     "languages": [
       {
         "id": "cflog",
@@ -42,9 +27,9 @@
           "cflog"
         ],
         "extensions": [
-          ".log",
           ".cflog"
         ],
+        "firstLine": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}(?:Z|[+\\-]\\d{4}) \\[[^\\]]+\\] STD(?:OUT|ERR) ",
         "configuration": "./language-configuration.json"
       }
     ],
@@ -54,12 +39,60 @@
         "scopeName": "source.cflog",
         "path": "./syntaxes/cflog.tmLanguage.json"
       }
+    ],
+    "semanticTokenTypes": [
+      {
+        "id": "cfLogTimestamp",
+        "superType": "number",
+        "description": "Cloud Foundry log timestamp"
+      },
+      {
+        "id": "cfLogSource",
+        "superType": "class",
+        "description": "Cloud Foundry process source"
+      },
+      {
+        "id": "cfLogStream",
+        "superType": "keyword",
+        "description": "Cloud Foundry output stream"
+      },
+      {
+        "id": "cfLogLevelError",
+        "superType": "regexp",
+        "description": "Error or fatal log level"
+      },
+      {
+        "id": "cfLogLevelWarning",
+        "superType": "macro",
+        "description": "Warning log level"
+      },
+      {
+        "id": "cfLogLevelInfo",
+        "superType": "enumMember",
+        "description": "Informational log level"
+      },
+      {
+        "id": "cfLogLevelDebug",
+        "superType": "comment",
+        "description": "Debug, trace, or verbose log level"
+      },
+      {
+        "id": "cfLogLogger",
+        "superType": "class",
+        "description": "Logger name"
+      },
+      {
+        "id": "cfLogMessage",
+        "superType": "string",
+        "description": "Log message"
+      }
     ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./"
+    "watch": "tsc -watch -p ./",
+    "test": "npm run compile && node --test out/tokenizer.test.js"
   },
   "devDependencies": {
     "@types/node": "^16.18.126",

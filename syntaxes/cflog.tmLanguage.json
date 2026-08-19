@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "CF-Log",
+  "scopeName": "source.cflog",
+  "patterns": [
+    {
+      "name": "constant.numeric.timestamp.cflog",
+      "match": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}(?:Z|[+\\-]\\d{4})"
+    },
+    {
+      "name": "comment.block.documentation.cflog",
+      "match": "\\[[^\\]]+\\]|\\bSTD(?:OUT|ERR)\\b"
+    },
+    {
+      "begin": "\\{",
+      "end": "\\}",
+      "name": "meta.structure.dictionary.json.cflog",
+      "patterns": [
+        {
+          "name": "comment.block.cflog",
+          "match": "\"(?:correlation_id|user_agent|x_forwarded_proto|x_scp_request_id|request_id|layer|x_correlation_id|sec_ch_ua|referer|authorization|b3|cookie|pragma|priority|x_b3_traceid|timestamp|x_vcap_request_id|x_forwarded_for|x_cf_instanceid)\"\\s*:\\s*\"(?:\\\\.|[^\"\\\\])*\""
+        },
+        {
+          "name": "variable.other.readwrite.cflog",
+          "match": "\"(?:tenant_id|host|cache_control|x_cf_applicationid|organization_name|organization_id|tenant_subdomain|space_id|component_id|component_name)\"\\s*:\\s*\"(?:\\\\.|[^\"\\\\])*\""
+        }
+      ]
+    }
+  ]
+}

@@ -1,15 +1,28 @@
-# cf-logs-highlighting README
+# CF Logs Highlighting
 
-Basic highlighting of CF Logs
+Highlights one-line Cloud Foundry logs that contain a CF envelope followed by
+structured JSON.
 
-## Customizing Colors
+The extension emphasizes:
 
-You can customize the colors in your VS Code settings.json. Add this to your settings:
+- timestamps, process sources, and `STDOUT`/`STDERR`
+- error, warning, info, and debug-style log levels
+- logger names
+- complete `msg` values, including escaped quotes and embedded JSON
+- technical request and tracing fields using the original
+  `comment.block.cflog` scope, allowing compatible themes to hide them against
+  the editor background
 
-```json
-"cfLogColors": {
-   
-}
+Files ending in `.cflog` use the language automatically. Regular `.log` files
+are detected from a first line such as:
+
+```text
+2026-08-19T09:00:12.752+0000 [APP/PROC/WEB/0] STDOUT {"level":"info",...}
 ```
 
-Replace the color values with your preferred colors. The extension uses standard TextMate scopes that work with any VS Code theme.
+Colors inherit from the active VS Code theme and do not modify global user
+settings. Custom semantic token types start with `cfLog`, so they can also be
+overridden through `editor.semanticTokenColorCustomizations`.
+
+For escaped content inside messages, use the companion **UnEscape** extension's
+**UnEscape Selection** command on a copied message or selection.

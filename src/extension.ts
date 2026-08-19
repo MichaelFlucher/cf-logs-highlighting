@@ -1,81 +1,35 @@
 import * as vscode from 'vscode';
+import { findCfLogTokens, TokenKind } from './tokenizer';
 
-// Define token types that extend from standard types
-const tokenTypes = new Map<string, number>([
-    ['namespace', 0],  // for timestamps
-    ['class', 1],     // for service names
-    ['type', 2],      // for log levels
-    ['string', 3],    // for messages
-    ['comment', 4]    // for unimportant parts
-]);
-
-const tokenModifiers = new Map<string, number>([
-    ['declaration', 0],
-    ['documentation', 1],
-    ['readonly', 2],
-    ['static', 3],
-    ['deprecated', 4],
-    ['modification', 5]
-]);
+const tokenTypeNames: TokenKind[] = [
+    'cfLogTimestamp',
+    'cfLogSource',
+    'cfLogStream',
+    'cfLogLevelError',
+    'cfLogLevelWarning',
+    'cfLogLevelInfo',
+    'cfLogLevelDebug',
+    'cfLogLogger',
+    'cfLogMessage',
+];
 
 const legend = new vscode.SemanticTokensLegend(
-    Array.from(tokenTypes.keys()),
-    Array.from(tokenModifiers.keys())
+    tokenTypeNames,
+    []
 );
 
 class CFLogSemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {
-    async provideDocumentSemanticTokens(document: vscode.TextDocument): Promise<vscode.SemanticTokens> {
+    provideDocumentSemanticTokens(document: vscode.TextDocument): vscode.SemanticTokens {
         const tokensBuilder = new vscode.SemanticTokensBuilder(legend);
 
         for (let lineIndex = 0; lineIndex < document.lineCount; lineIndex++) {
-            const line = document.lineAt(lineIndex);
-            const text = line.text;
-
-            // Match timestamp
-            const timestampMatch = text.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}[+\-]\d{4}/);
-            if (timestampMatch) {
+            for (const token of findCfLogTokens(document.lineAt(lineIndex).text)) {
                 tokensBuilder.push(
                     lineIndex,
-                    timestampMatch.index || 0,
-                    timestampMatch[0].length,
-                    tokenTypes.get('namespace')!,
-                    tokenModifiers.get('readonly')!
-                );
-            }
-
-            // Match service name
-            const serviceMatch = text.match(/\[(APP\/PROC\/WEB\/\d+|[^\]]+)\]/);
-            if (serviceMatch) {
-                tokensBuilder.push(
-                    lineIndex,
-                    serviceMatch.index || 0,
-                    serviceMatch[0].length,
-                    tokenTypes.get('class')!,
+                    token.start,
+                    token.length,
+                    tokenTypeNames.indexOf(token.kind),
                     0
-                );
-            }
-
-            // Match log level
-            const levelMatch = text.match(/"level":"(verbose|debug|info|warn|error)"/);
-            if (levelMatch) {
-                tokensBuilder.push(
-                    lineIndex,
-                    levelMatch.index || 0,
-                    levelMatch[0].length,
-                    tokenTypes.get('type')!,
-                    0
-                );
-            }
-
-            // Match message
-            const msgMatch = text.match(/"msg":"([^"]+)"/);
-            if (msgMatch) {
-                tokensBuilder.push(
-                    lineIndex,
-                    msgMatch.index || 0,
-                    msgMatch[0].length,
-                    tokenTypes.get('string')!,
-                    tokenModifiers.get('documentation')!
                 );
             }
         }
